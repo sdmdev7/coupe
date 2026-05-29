@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#1a5d3a">
+    <title>SenTailleur Pro - Cabinet de mesures traditionnelles</title>
+    <!-- Bootstrap 5 + Icons + Font Awesome + Google Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- jsPDF pour exports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #fef9e6 0%, #fff5e0 100%);
+            color: #2d2a24;
+            min-height: 100vh;
+        }
+
+        /* Motifs décoratifs */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 10% 20%, rgba(206, 17, 38, 0.03) 2%, transparent 2.5%),
+                              radial-gradient(circle at 85% 70%, rgba(26, 93, 58, 0.03) 1.8%, transparent 2%);
+            background-size: 55px 55px, 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 16px 16px 40px;
+        }
+
+        /* Header */
+        .hero-section {
+            background: linear-gradient(135deg, #1a5d3a 0%, #2a7a4e 100%);
+            border-radius: 32px;
+            padding: 16px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: "✦ ✦ ✦";
+            position: absolute;
+            bottom: -20px;
+            right: 10px;
+            font-size: 70px;
+            color: rgba(255, 215, 0, 0.08);
+            font-weight: 300;
+            pointer-events: none;
+        }
+
+        .logo-icon {
+            background: #e8b32b;
+            width: 45px;
+            height: 45px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Cartes modernes */
+        .card-luxury {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(2px);
+            border-radius: 28px;
+            border: none;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .card-header-custom {
+            background: white;
+            border-bottom: 2px solid #f0e6d2;
+            padding: 1rem 1.5rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1a5d3a;
+        }
+
+        /* ========== SYSTÈME D'ACCORDÉON / MASQUAGE ========== */
+        .section-accordion {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            border: 1px solid #f0e6d2;
+            transition: all 0.2s;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: #fefcf8;
+            cursor: pointer;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .section-header:hover {
+            background: #fff5e8;
+        }
+
+        .section-header h6 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1a5d3a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header i.fa-chevron-down, 
+        .section-header i.fa-chevron-up {
+            color: #e8b32b;
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+        }
+
+        .section-content {
+            padding: 16px 18px;
+            border-top: 1px solid #f0e6d2;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .section-content.collapsed {
+            display: none;
+        }
+
+        /* Badges */
+        .badge-tenue {
+            background: linear-gradient(145deg, #1a5d3a, #226b45);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 4px 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .badge-tenue.selected {
+            background: #ce1126;
+            transform: scale(1.02);
+        }
+
+        /* Filtres genre */
+        .gender-filter-buttons {
+            background: #f2efe8;
+            border-radius: 100px;
+            display: inline-flex;
+            padding: 4px;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .gender-filter-btn {
+            padding: 6px 18px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .gender-filter-btn.active {
+            background: #e8b32b;
+            color: #1a5d3a;
+        }
+
+        .form-control, .form-select {
+            border-radius: 20px;
+            border: 1.5px solid #e9e2d4;
+            padding: 10px 16px;
+            background: #fefcf8;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #e8b32b;
+            box-shadow: 0 0 0 3px rgba(232, 179, 43, 0.2);
+            outline: none;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #e8b32b, #d49e1f);
+            border: none;
+            border-radius: 60px;
+            padding: 10px 22px;
+            font-weight: 700;
+            color: #2d2a24;
+            transition: all 0.2s;
+        }
+
+        .btn-green {
+            background: #1a5d3a;
+            border: none;
+            border-radius: 60px;
+            padding: 10px 22px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .btn-outline-cream {
+            border: 2px solid #e9e2d4;
+            border-radius: 60px;
+            padding: 8px 18px;
+            font-weight: 500;
+            background: white;
+        }
+
+        .gender-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .gender-badge.male { background: #d4eef7; color: #1a5d3a; }
+        .gender-badge.female { background: #f7d4e0; color: #9b2c4a; }
+
+        .photo-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 16px;
+            border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .custom-field-card {
+            background: #fef8ef;
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .table-responsive-custom {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-custom {
+            min-width: 500px;
+        }
+
+        .client-row {
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .client-row:active {
+            background-color: #fff0d4 !important;
+        }
+
+        .stat-badge {
+            background: #f0e9dd;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0e9dd;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a5d3a;
+            border-radius: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #6b5c47;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container { padding: 12px; }
+            .hero-section { padding: 12px 18px; }
+            .section-header { padding: 10px 14px; }
+            .section-content { padding: 12px 14px; }
+            .badge-tenue { padding: 4px 12px; font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="main-container">
+    <!-- Header -->
+    <div class="hero-section d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-3">
+            <div class="logo-icon">
+                <i class="fas fa-scissors" style="color:#1a5d3a;"></i>
+            </div>
+            <div>
+                <h1 class="text-white fw-bold mb-0" style="font-family: 'Playfair Display';">SenTailleur Pro</h1>
+                <p class="text-white-50 mb-0" style="font-size: 0.85rem;">Artisan des mesures & tenues authentiques</p>
+            </div>
+        </div>
+        <div class="mt-2 mt-sm-0">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill" style="font-size: 0.7rem;">
+                <i class="fas fa-layer-group me-1"></i> Sections masquables
+            </span>
+        </div>
+    </div>
+
+    <div class="row g-3 g-lg-4">
+        <!-- FORMULAIRE PRINCIPAL GAUCHE avec sections masquables -->
+        <div class="col-12 col-lg-6">
+            <div class="card-luxury card">
+                <div class="card-header-custom">
+                    <i class="fas fa-tape me-2" style="color:#e8b32b;"></i> 
+                    <span id="formTitle">Nouvelle fiche client</span>
+                </div>
+                <div class="card-body p-3 p-md-4" style="max-height: 70vh; overflow-y: auto;">
+                    <form id="measurementForm">
+                        
+                        <!-- SECTION 1 : Identité (toujours visible ou masquable) -->
+                        <div class="section-accordion">
+                            <div class="section-header" data-section="identity">
+                                <h6><i class="fas fa-id-card" style="color:#e8b32b;"></i> Identité du client</h6>
+                                <i class="fas fa-chevron-up"></i>
+                            </div>
+                            <div class="section-content" id="section-identity">
+                                <div class="row g-2">
+                                    <div class="col-6 mb-2">
+                                        <label class="fw-semibold small"><i class="fas fa-user"></i> Prénom *</label>
+                                        <input type="text" class="form-control" id="firstName" placeholder="ex: Aïssatou" required>
+                                    </div>
+                                    <div class="col-6 mb-2">
+                                        <label class="fw-semibold small">Nom *</label>
+                                        <input type="text" class="form-control" id="lastName" placeholder="Diop" required>
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-2">
+                                        <label class="fw-semibold small">Email</label>
+                                        <input type="email" class="form-control" id="email" placeholder="client@exemple.com">
+                                    </div>
+                                    <div class="col-12 col-md-6 mb-2">
+                                        <label class="fw-semibold small">Téléphone</label>
+                                        <input type="tel" class="form-control" id="phone" placeholder="+221 77 000 00 00">
+                                    </div>
+                                    <div class="col-12 mb-2">
+                                        <label class="fw-semibold small"><i class="fas fa-venus-mars"></i> Sexe *</label>
+                                        <div class="d-flex gap-3 mt-1">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="genderRadio" id="genderHomme" value="homme" checked>
+                                                <label class="form-check-label" for="genderHomme">👨 Homme</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="genderRadio" id="genderFemme" value="femme">
+                                                <label class="form-check-label" for="genderFemme">👩 Femme</label>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="gender" value="homme">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 2 : Tenues traditionnelles -->
+                        <div class="section-accordion">
+                            <div class="section-header" data-section="tenues">
+                                <h6><i class="fas fa-vest" style="color:#e8b32b;"></i> Tenues traditionnelles</h6>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="section-content collapsed" id="section-tenues">
+                                <div id="tenueOptions" class="d-flex flex-wrap">
+                                    <div class="badge-tenue" data-tenue="Boubou grand">👘 Boubou grand</div>
+                                    <div class="badge-tenue" data-tenue="Kaftan">🕌 Kaftan</div>
+                                    <div class="badge-tenue" data-tenue="Grand boubou (Agiye)">👑 Grand boubou</div>
+                                    <div class="badge-tenue" data-tenue="Caftan Sénégalais">✨ Caftan</div>
+                                    <div class="badge-tenue" data-tenue="Complet 3 pièces">🥻 3 pièces</div>
+                                    <div class="badge-tenue" data-tenue="Robe sénégalaise">💃 Robe</div>
+                                    <div class="badge-tenue" data-tenue="Costume moderne">🎩 Costume</div>
+                                </div>
+                                <div class="input-group mt-3">
+                                    <input type="text" id="newTenueName" class="form-control form-control-sm" placeholder="Nouvelle tenue">
+                                    <button type="button" class="btn btn-outline-cream btn-sm" onclick="addNewTenue()"><i class="fas fa-plus-circle"></i> Ajouter</button>
+                                </div>
+                                <input type="hidden" id="selectedTenue" value="Boubou grand">
+                            </div>
+                        </div>
+
+                        <!-- SECTION 3 : Mensurations standard -->
+                        <div class="section-accordion">
+                            <div class="section-header" data-section="mensurations">
+                                <h6><i class="fas fa-ruler-combined" style="color:#e8b32b;"></i> Mensurations standard (cm)</h6>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="section-content collapsed" id="section-mensurations">
+                                <div class="row g-2">
+                                    <div class="col-6 mb-2"><label class="small">Tour de poitrine</label><input type="number" step="0.5" class="form-control form-control-sm" id="chest"></div>
+                                    <div class="col-6 mb-2"><label class="small">Tour de taille</label><input type="number" step="0.5" class="form-control form-control-sm" id="waist"></div>
+                                    <div class="col-6 mb-2"><label class="small">Tour de hanches</label><input type="number" step="0.5" class="form-control form-control-sm" id="hips"></div>
+                                    <div class="col-6 mb-2"><label class="small">Longueur manche</label><input type="number" step="0.5" class="form-control form-control-sm" id="sleeveLength"></div>
+                                    <div class="col-6 mb-2"><label class="small">Largeur épaules</label><input type="number" step="0.5" class="form-control form-control-sm" id="shoulderWidth"></div>
+                                    <div class="col-6 mb-2"><label class="small">Longueur totale tenue</label><input type="number" step="0.5" class="form-control form-control-sm" id="totalLength"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 4 : Mesures personnalisées -->
+                        <div class="section-accordion">
+                            <div class="section-header" data-section="custom">
+                                <h6><i class="fas fa-plus-circle" style="color:#e8b32b;"></i> Mesures personnalisées</h6>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="section-content collapsed" id="section-custom">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="small text-muted">Ajoutez vos propres champs</span>
+                                    <button type="button" class="btn btn-sm btn-gold" onclick="addCustomMeasureField()" style="padding: 4px 12px; font-size: 0.7rem;"><i class="fas fa-plus"></i> Ajouter</button>
+                                </div>
+                                <div id="customMeasuresContainer"></div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 5 : Proportions -->
+                        <div class="section-accordion">
+                            <div class="section-header" data-section="proportions">
+                                <h6><i class="fas fa-arrows-alt" style="color:#e8b32b;"></i> Proportions & morphologie</h6>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="section-content collapsed" id="section-proportions">
+                                <div class="row g-2">
+                                    <div class="col-6 mb-2"><label class="small">Hauteur (cm)</label><input type="number" step="0.5" class="form-control form-control-sm" id="height"></div>
+                                    <div class="col-6 mb-2"><label class="small">Poids (kg)</label><input type="number" step="0.5" class="form-control form-control-sm" id="weight"></div>
+                                    <div class="col-12 mb-2"><label class="small">Morphologie</label><select class="form-select form-select-sm" id="morphology"><option>Normal</option><option>Athlétique</option><option>Rond</option><option>Mince</option><option>Épaules larges</option></select></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 6 : Photos -->
+                        <div class="section-accordion">
+                            <div class="section-header" data-section="photos">
+                                <h6><i class="fas fa-camera-retro" style="color:#e8b32b;"></i> Photos référence</h6>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="section-content collapsed" id="section-photos">
+                                <input type="file" id="clientPhotos" accept="image/*" multiple class="form-control form-control-sm">
+                                <div id="photoPreviewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 7 : Notes -->
+                        <div class="section-accordion">
+                            <div class="section-header" data-section="notes">
+                                <h6><i class="fas fa-pen-alt" style="color:#e8b32b;"></i> Notes & préférences</h6>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="section-content collapsed" id="section-notes">
+                                <textarea class="form-control" id="notes" rows="2" placeholder="Tissu préféré, coupe ajustée, motif spécial..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Boutons action -->
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="button" class="btn btn-green flex-fill" id="saveBtn"><i class="fas fa-save"></i> Enregistrer</button>
+                            <button type="button" class="btn btn-outline-cream" id="resetFormBtn"><i class="fas fa-undo-alt"></i> Nouveau</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- PARTIE DROITE -->
+        <div class="col-12 col-lg-6">
+            <!-- Stats -->
+            <div class="card-luxury card mb-3">
+                <div class="card-body p-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div><i class="fas fa-map-marker-alt text-success"></i> <strong>Sénégal, terre d'élégance</strong></div>
+                    <div class="stat-badge"><i class="fas fa-users"></i> <span id="totalClientsCount">0</span> clients</div>
+                </div>
+            </div>
+
+            <!-- Recherche -->
+            <div class="card-luxury card mb-3">
+                <div class="card-header-custom py-2">
+                    <i class="fas fa-search"></i> Rechercher un client
+                </div>
+                <div class="card-body p-3">
+                    <div class="input-group mb-2">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Nom, prénom, téléphone...">
+                        <button class="btn btn-gold" id="searchBtn"><i class="fas fa-search"></i></button>
+                        <button class="btn btn-outline-cream" id="resetSearchBtn"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <label class="fw-semibold small mb-0"><i class="fas fa-venus-mars"></i> Filtrer par sexe :</label>
+                        <div class="gender-filter-buttons">
+                            <div class="gender-filter-btn active" data-filter-gender="all">👥 Tous</div>
+                            <div class="gender-filter-btn" data-filter-gender="homme">👨 Hommes</div>
+                            <div class="gender-filter-btn" data-filter-gender="femme">👩 Femmes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste clients -->
+            <div class="card-luxury card">
+                <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2 py-2">
+                    <span><i class="fas fa-address-book"></i> Carnet de mesures</span>
+                    <button class="btn btn-sm btn-gold" id="exportAllBtn" style="padding: 4px 12px; font-size: 0.7rem;"><i class="fas fa-file-pdf"></i> Exporter tout</button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive-custom">
+                        <table class="table table-hover mb-0 table-custom">
+                            <thead class="table-light">
+                                <tr><th>Client</th><th>Sexe</th><th>Tenue</th><th>Poitrine</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="clientTableBody">
+                                <tr><td colspan="5" class="text-center py-4">Chargement...</td></tr>
+                            </tbody>
+                         </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 text-muted small text-center py-2">
+                    <i class="fas fa-database"></i> Sauvegarde locale automatique
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <i class="fas fa-scissors me-1"></i> SenTailleur Pro — Cliquez sur les en-têtes pour masquer/afficher les sections
+    </footer>
+</div>
+
+<script>
+    // ========== SYSTÈME DE MASQUAGE/AFFICHAGE ==========
+    function initAccordion() {
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const sectionId = this.getAttribute('data-section');
+                const content = document.getElementById(`section-${sectionId}`);
+                const icon = this.querySelector('i.fa-chevron-down, i.fa-chevron-up');
+                
+                if(content.classList.contains('collapsed')) {
+                    content.classList.remove('collapsed');
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                } else {
+                    content.classList.add('collapsed');
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                }
+            });
+        });
+    }
+
+    // ========== DATA ==========
+    let clientsData = [];
+    let photoDataArray = [];
+    let currentGenderFilter = "all";
+
+    function loadData() {
+        const stored = localStorage.getItem('SenTailleurComplet');
+        if(stored) {
+            try {
+                clientsData = JSON.parse(stored);
+            } catch(e) { clientsData = []; }
+        }
+        if(!clientsData || clientsData.length === 0) {
+            clientsData = [
+                { id: Date.now()+1, firstName: "Mame", lastName: "Diouf", gender: "homme", tenue: "Boubou grand", email: "mame@exemple.com", phone: "771234567",
+                  chest: 102, waist: 88, hips: 98, sleeveLength: 64, shoulderWidth: 47, totalLength: 118,
+                  height: 180, weight: 78, morphology: "Athlétique", notes: "Ourlet spécial, tissu bazin", photos: [],
+                  customMeasures: {"Tour de bras": 32, "Longueur dos": 46}, date: new Date().toISOString() },
+                { id: Date.now()+2, firstName: "Fatou", lastName: "NDiaye", gender: "femme", tenue: "Robe sénégalaise", email: "fatou@exemple.com", phone: "778889900",
+                  chest: 92, waist: 74, hips: 98, sleeveLength: 58, shoulderWidth: 39, totalLength: 112,
+                  height: 165, weight: 62, morphology: "Normal", notes: "Robe pour mariage", photos: [],
+                  customMeasures: {"Tour de cou": 34}, date: new Date().toISOString() },
+                { id: Date.now()+3, firstName: "Ousmane", lastName: "Sow", gender: "homme", tenue: "Kaftan", email: "ousmane@exemple.com", phone: "776665544",
+                  chest: 98, waist: 84, hips: 96, sleeveLength: 62, shoulderWidth: 45, totalLength: 120,
+                  height: 175, weight: 72, morphology: "Normal", notes: "Boubou pour Tabaski", photos: [],
+                  customMeasures: {}, date: new Date().toISOString() }
+            ];
+            saveData();
+        }
+        updateTotalCount();
+        renderTable();
+    }
+    
+    function saveData() { 
+        localStorage.setItem('SenTailleurComplet', JSON.stringify(clientsData)); 
+        updateTotalCount(); 
+    }
+    
+    function updateTotalCount() { 
+        document.getElementById('totalClientsCount').innerText = clientsData.length; 
+    }
+
+    function escapeHtml(str) {
+        if(!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function renderTable() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        let filtered = clientsData.filter(c => 
+            (c.firstName+' '+c.lastName+' '+c.phone+' '+c.email).toLowerCase().includes(searchTerm)
+        );
+        
+        if(currentGenderFilter !== "all") {
+            filtered = filtered.filter(c => c.gender === currentGenderFilter);
+        }
+        
+        const tbody = document.getElementById('clientTableBody');
+        if(filtered.length === 0) { 
+            tbody.innerHTML='<tr><td colspan="5" class="text-center py-4">👗 Aucun client trouvé</td></tr>'; 
+            return; 
+        }
+        
+        let html = '';
+        filtered.forEach(c => {
+            const sexIcon = c.gender === 'homme' ? '👨' : '👩';
+            const sexLabel = c.gender === 'homme' ? 'Homme' : 'Femme';
+            html += `<tr data-client-id="${c.id}" class="client-row">
+                <td><strong>${escapeHtml(c.firstName)} ${escapeHtml(c.lastName)}</strong><br><small class="text-muted">${c.phone || ''}</small></td>
+                <td><span class="gender-badge ${c.gender === 'homme' ? 'male' : 'female'}">${sexIcon} ${sexLabel}</span></td>
+                <td><span class="badge bg-success bg-opacity-25 text-dark px-2 py-1 rounded-pill" style="font-size:0.7rem">${escapeHtml(c.tenue)}</span></td>
+                <td>${c.chest || '-'} cm</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="event.stopPropagation(); editClient(${c.id})" style="padding:2px 6px"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteClient(${c.id})" style="padding:2px 6px"><i class="fas fa-trash-alt"></i></button>
+                    <button class="btn btn-sm btn-outline-success mt-1 mt-sm-0" onclick="event.stopPropagation(); exportSinglePDF(${c.id})" style="padding:2px 6px"><i class="fas fa-file-pdf"></i></button>
+                </td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+        
+        document.querySelectorAll('.client-row').forEach(row => {
+            row.addEventListener('click', function(e) {
+                const clientId = parseInt(this.getAttribute('data-client-id'));
+                loadClientIntoForm(clientId);
+            });
+        });
+    }
+
+    function setGenderFilter(filter) {
+        currentGenderFilter = filter;
+        document.querySelectorAll('.gender-filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if(btn.getAttribute('data-filter-gender') === filter) {
+                btn.classList.add('active');
+            }
+        });
+        renderTable();
+    }
+
+    window.loadClientIntoForm = function(clientId) {
+        const client = clientsData.find(c => c.id === clientId);
+        if(!client) return;
+        
+        document.getElementById('firstName').value = client.firstName;
+        document.getElementById('lastName').value = client.lastName;
+        document.getElementById('email').value = client.email || '';
+        document.getElementById('phone').value = client.phone || '';
+        
+        if(client.gender === 'homme') {
+            document.getElementById('genderHomme').checked = true;
+            document.getElementById('gender').value = 'homme';
+        } else {
+            document.getElementById('genderFemme').checked = true;
+            document.getElementById('gender').value = 'femme';
+        }
+        
+        document.getElementById('selectedTenue').value = client.tenue;
+        document.querySelectorAll('.badge-tenue').forEach(badge => {
+            if(badge.getAttribute('data-tenue') === client.tenue) {
+                selectTenueElement(badge);
+            }
+        });
+        
+        document.getElementById('chest').value = client.chest || '';
+        document.getElementById('waist').value = client.waist || '';
+        document.getElementById('hips').value = client.hips || '';
+        document.getElementById('sleeveLength').value = client.sleeveLength || '';
+        document.getElementById('shoulderWidth').value = client.shoulderWidth || '';
+        document.getElementById('totalLength').value = client.totalLength || '';
+        document.getElementById('height').value = client.height || '';
+        document.getElementById('weight').value = client.weight || '';
+        document.getElementById('morphology').value = client.morphology || 'Normal';
+        document.getElementById('notes').value = client.notes || '';
+        
+        loadCustomMeasures(client.customMeasures || {});
+        
+        photoDataArray = client.photos ? [...client.photos] : [];
+        const previewDiv = document.getElementById('photoPreviewContainer');
+        previewDiv.innerHTML = '';
+        if(photoDataArray.length) {
+            photoDataArray.forEach(ph => {
+                const img = document.createElement('img');
+                img.src = ph;
+                img.classList.add('photo-preview');
+                previewDiv.appendChild(img);
+            });
+        }
+        
+        const sexIcon = client.gender === 'homme' ? '👨' : '👩';
+        document.getElementById('formTitle').innerHTML = `<i class="fas fa-user-check me-2"></i>${sexIcon} ${escapeHtml(client.firstName)} ${escapeHtml(client.lastName)}`;
+        
+        document.getElementById('saveBtn').setAttribute('data-edit-id', client.id);
+        document.getElementById('saveBtn').innerHTML = '<i class="fas fa-pen"></i> Mettre à jour';
+        
+        document.querySelector('.card-luxury').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast(`Client chargé : ${client.firstName} ${client.lastName}`, 'success');
+    };
+
+    function selectTenueElement(el) {
+        document.querySelectorAll('.badge-tenue').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('selectedTenue').value = el.getAttribute('data-tenue');
+    }
+    
+    window.addNewTenue = function() {
+        const newName = document.getElementById('newTenueName').value.trim();
+        if(!newName) { showToast("Veuillez entrer un nom de tenue", 'warning'); return; }
+        const container = document.getElementById('tenueOptions');
+        const badge = document.createElement('div');
+        badge.className = 'badge-tenue';
+        badge.setAttribute('data-tenue', newName);
+        badge.innerHTML = `✨ ${escapeHtml(newName)}`;
+        badge.onclick = function() { selectTenueElement(this); };
+        container.appendChild(badge);
+        selectTenueElement(badge);
+        document.getElementById('newTenueName').value = '';
+        showToast(`Tenue "${newName}" ajoutée`, 'success');
+    };
+    
+    document.querySelectorAll('.badge-tenue').forEach(b => { b.onclick = function() { selectTenueElement(this); }; });
+
+    window.addCustomMeasureField = function() {
+        const container = document.getElementById('customMeasuresContainer');
+        const id = Date.now();
+        const div = document.createElement('div');
+        div.className = 'custom-field-card';
+        div.innerHTML = `
+            <input type="text" placeholder="Nom (ex: Tour de cheville)" class="form-control form-control-sm" style="flex:2" id="label_${id}">
+            <input type="number" step="0.5" placeholder="cm" class="form-control form-control-sm" style="flex:1" id="val_${id}">
+            <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()" style="padding:2px 8px"><i class="fas fa-trash"></i></button>
+        `;
+        container.appendChild(div);
+    };
+    
+    function collectCustomMeasures() {
+        let measures = {};
+        document.querySelectorAll('#customMeasuresContainer .custom-field-card').forEach(f => {
+            const label = f.querySelector('input[type="text"]').value.trim();
+            const val = f.querySelector('input[type="number"]').value;
+            if(label) measures[label] = val || 0;
+        });
+        return measures;
+    }
+    
+    function loadCustomMeasures(custom) {
+        const container = document.getElementById('customMeasuresContainer');
+        container.innerHTML = '';
+        if(custom && typeof custom === 'object') {
+            for(let [name,val] of Object.entries(custom)) {
+                const div = document.createElement('div');
+                div.className = 'custom-field-card';
+                div.innerHTML = `<input type="text" value="${escapeHtml(name)}" class="form-control form-control-sm" style="flex:2"><input type="number" value="${val}" step="0.5" class="form-control form-control-sm" style="flex:1"><button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()" style="padding:2px 8px"><i class="fas fa-trash"></i></button>`;
+                container.appendChild(div);
+            }
+        }
+    }
+
+    document.getElementById('clientPhotos').addEventListener('change', function(e) {
+        photoDataArray = [];
+        const preview = document.getElementById('photoPreviewContainer');
+        preview.innerHTML = '';
+        Array.from(e.target.files).forEach(file => {
+            if(file.size > 5 * 1024 * 1024) {
+                showToast("Photo trop volumineuse (max 5Mo)", 'warning');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = ev => { 
+                photoDataArray.push(ev.target.result); 
+                const img = document.createElement('img'); 
+                img.src = ev.target.result; 
+                img.classList.add('photo-preview'); 
+                preview.appendChild(img); 
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    function saveMeasurement(editId=null) {
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        if(!firstName || !lastName) { showToast("Prénom et nom obligatoires", 'error'); return; }
+        
+        let genderValue = document.getElementById('genderHomme').checked ? 'homme' : 'femme';
+        
+        const newClient = {
+            id: editId ? parseInt(editId) : Date.now(),
+            firstName, lastName, 
+            email: document.getElementById('email').value, 
+            phone: document.getElementById('phone').value,
+            gender: genderValue, 
+            tenue: document.getElementById('selectedTenue').value,
+            chest: parseFloat(document.getElementById('chest').value)||0, 
+            waist: parseFloat(document.getElementById('waist').value)||0,
+            hips: parseFloat(document.getElementById('hips').value)||0, 
+            sleeveLength: parseFloat(document.getElementById('sleeveLength').value)||0,
+            shoulderWidth: parseFloat(document.getElementById('shoulderWidth').value)||0, 
+            totalLength: parseFloat(document.getElementById('totalLength').value)||0,
+            height: parseFloat(document.getElementById('height').value)||0, 
+            weight: parseFloat(document.getElementById('weight').value)||0,
+            morphology: document.getElementById('morphology').value, 
+            notes: document.getElementById('notes').value,
+            photos: photoDataArray, 
+            customMeasures: collectCustomMeasures(), 
+            date: new Date().toISOString()
+        };
+        
+        if(editId) { 
+            const idx = clientsData.findIndex(c=>c.id==editId); 
+            if(idx !== -1) clientsData[idx] = newClient; 
+            else clientsData.push(newClient); 
+        } else clientsData.push(newClient);
+        
+        saveData(); 
+        renderTable(); 
+        resetForm(); 
+        showToast(editId ? "✅ Client mis à jour !" : "✅ Nouveau client ajouté !", 'success');
+    }
+    
+    window.editClient = function(id) { loadClientIntoForm(id); };
+    
+    window.deleteClient = function(id) { 
+        if(confirm("⚠️ Supprimer définitivement ce client ?")) { 
+            clientsData = clientsData.filter(c=>c.id!=id); 
+            saveData(); 
+            renderTable(); 
+            showToast("Client supprimé", 'info');
+        } 
+    };
+    
+    function resetForm() {
+        document.getElementById('measurementForm').reset(); 
+        document.getElementById('genderHomme').checked = true;
+        document.getElementById('gender').value = 'homme';
+        photoDataArray = []; 
+        document.getElementById('photoPreviewContainer').innerHTML = '';
+        document.getElementById('customMeasuresContainer').innerHTML = '';
+        const firstTenue = document.querySelector('.badge-tenue');
+        if(firstTenue) selectTenueElement(firstTenue);
+        document.getElementById('saveBtn').removeAttribute('data-edit-id');
+        document.getElementById('saveBtn').innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+        document.getElementById('formTitle').innerHTML = '<i class="fas fa-tape me-2"></i> Nouvelle fiche client';
+    }
+    
+    window.exportSinglePDF = async function(id) {
+        const c = clientsData.find(x=>x.id==id); 
+        if(!c) return;
+        const {jsPDF}=window.jspdf; 
+        const doc=new jsPDF();
+        doc.setFontSize(18); 
+        doc.text("📏 FICHE CLIENT - SenTailleur Pro", 20,20);
+        doc.setFontSize(12); 
+        doc.text(`${c.firstName} ${c.lastName} - ${c.gender==='homme'?'Homme':'Femme'}`,20,40);
+        doc.text(`Tenue: ${c.tenue}`,20,50); 
+        doc.text(`Tél: ${c.phone||'-'} | Email: ${c.email||'-'}`,20,60);
+        doc.text(`Mensurations: Poitrine ${c.chest}cm / Taille ${c.waist}cm / Hanches ${c.hips}cm`,20,80);
+        doc.text(`Manche: ${c.sleeveLength}cm / Épaules: ${c.shoulderWidth}cm / Longueur tenue: ${c.totalLength}cm`,20,95);
+        doc.text(`Hauteur: ${c.height}cm - Poids: ${c.weight}kg - Morphologie: ${c.morphology}`,20,110);
+        if(c.notes) doc.text(`Notes: ${c.notes}`,20,125);
+        if(c.customMeasures && Object.keys(c.customMeasures).length) {
+            let y = 140;
+            doc.text("Mesures supplémentaires:", 20, y);
+            y+=8;
+            for(let [k,v] of Object.entries(c.customMeasures)) {
+                doc.text(`• ${k}: ${v} cm`, 25, y);
+                y+=7;
+                if(y>270) { doc.addPage(); y=20; }
+            }
+        }
+        doc.save(`${c.firstName}_${c.lastName}_mesures.pdf`);
+        showToast("PDF exporté", 'success');
+    };
+    
+    document.getElementById('exportAllBtn').addEventListener('click', () => { 
+        if(clientsData.length) showToast(`📄 ${clientsData.length} clients disponibles pour export individuel`, 'info');
+        else showToast("Aucun client à exporter", 'warning');
+    });
+    
+    function showToast(message, type = 'info') {
+        const toastDiv = document.createElement('div');
+        toastDiv.className = `toast-notification alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'info'} shadow`;
+        toastDiv.style.backgroundColor = type === 'success' ? '#1a5d3a' : type === 'error' ? '#ce1126' : '#e8b32b';
+        toastDiv.style.color = 'white';
+        toastDiv.style.padding = '10px 20px';
+        toastDiv.style.borderRadius = '30px';
+        toastDiv.style.fontSize = '0.85rem';
+        toastDiv.style.fontWeight = '500';
+        toastDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} me-2"></i>${message}`;
+        document.body.appendChild(toastDiv);
+        setTimeout(() => toastDiv.remove(), 2500);
+    }
+    
+    // Event listeners
+    document.getElementById('saveBtn').addEventListener('click', () => { 
+        const editId = document.getElementById('saveBtn').getAttribute('data-edit-id'); 
+        if(editId) saveMeasurement(editId); 
+        else saveMeasurement(); 
+    });
+    document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+    document.getElementById('searchBtn').addEventListener('click', () => renderTable());
+    document.getElementById('resetSearchBtn').addEventListener('click', () => { document.getElementById('searchInput').value = ''; renderTable(); });
+    document.getElementById('searchInput').addEventListener('keyup', () => renderTable());
+    
+    document.querySelectorAll('.gender-filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filterValue = this.getAttribute('data-filter-gender');
+            setGenderFilter(filterValue);
+        });
+    });
+    
+    document.querySelectorAll('input[name="genderRadio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.getElementById('gender').value = this.value;
+        });
+    });
+    
+    initAccordion();
+    loadData();
+</script>
+</body>
+</html>
