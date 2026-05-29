@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <meta name="theme-color" content="#1a5d3a">
-    <title>SenTailleur Pro - Cabinet de mesures traditionnelles</title>
+    <title>SenTailleur Pro - Cabinet de mesures professionnel</title>
     <!-- Bootstrap 5 + Icons + Font Awesome + Google Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +25,6 @@
             min-height: 100vh;
         }
 
-        /* Motifs décoratifs */
         .bg-pattern {
             position: fixed;
             top: 0;
@@ -47,7 +46,6 @@
             padding: 16px 16px 40px;
         }
 
-        /* Header */
         .hero-section {
             background: linear-gradient(135deg, #1a5d3a 0%, #2a7a4e 100%);
             border-radius: 32px;
@@ -81,7 +79,6 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
-        /* Cartes modernes */
         .card-luxury {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(2px);
@@ -102,7 +99,7 @@
             color: #1a5d3a;
         }
 
-        /* ========== SYSTÈME D'ACCORDÉON / MASQUAGE ========== */
+        /* ========== SYSTÈME D'ACCORDÉON ========== */
         .section-accordion {
             background: white;
             border-radius: 20px;
@@ -153,27 +150,6 @@
 
         .section-content.collapsed {
             display: none;
-        }
-
-        /* Badges */
-        .badge-tenue {
-            background: linear-gradient(145deg, #1a5d3a, #226b45);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin: 4px 5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .badge-tenue.selected {
-            background: #ce1126;
-            transform: scale(1.02);
         }
 
         /* Filtres genre */
@@ -337,7 +313,6 @@
             .hero-section { padding: 12px 18px; }
             .section-header { padding: 10px 14px; }
             .section-content { padding: 12px 14px; }
-            .badge-tenue { padding: 4px 12px; font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -352,7 +327,7 @@
             </div>
             <div>
                 <h1 class="text-white fw-bold mb-0" style="font-family: 'Playfair Display';">SenTailleur Pro</h1>
-                <p class="text-white-50 mb-0" style="font-size: 0.85rem;">Artisan des mesures & tenues authentiques</p>
+                <p class="text-white-50 mb-0" style="font-size: 0.85rem;">Prise de mesures professionnelle</p>
             </div>
         </div>
         <div class="mt-2 mt-sm-0">
@@ -363,7 +338,7 @@
     </div>
 
     <div class="row g-3 g-lg-4">
-        <!-- FORMULAIRE PRINCIPAL GAUCHE avec sections masquables -->
+        <!-- FORMULAIRE PRINCIPAL GAUCHE -->
         <div class="col-12 col-lg-6">
             <div class="card-luxury card">
                 <div class="card-header-custom">
@@ -373,7 +348,7 @@
                 <div class="card-body p-3 p-md-4" style="max-height: 70vh; overflow-y: auto;">
                     <form id="measurementForm">
                         
-                        <!-- SECTION 1 : Identité (toujours visible ou masquable) -->
+                        <!-- SECTION 1 : Identité (toujours visible) -->
                         <div class="section-accordion">
                             <div class="section-header" data-section="identity">
                                 <h6><i class="fas fa-id-card" style="color:#e8b32b;"></i> Identité du client</h6>
@@ -415,31 +390,7 @@
                             </div>
                         </div>
 
-                        <!-- SECTION 2 : Tenues traditionnelles -->
-                        <div class="section-accordion">
-                            <div class="section-header" data-section="tenues">
-                                <h6><i class="fas fa-vest" style="color:#e8b32b;"></i> Tenues traditionnelles</h6>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="section-content collapsed" id="section-tenues">
-                                <div id="tenueOptions" class="d-flex flex-wrap">
-                                    <div class="badge-tenue" data-tenue="Boubou grand">👘 Boubou grand</div>
-                                    <div class="badge-tenue" data-tenue="Kaftan">🕌 Kaftan</div>
-                                    <div class="badge-tenue" data-tenue="Grand boubou (Agiye)">👑 Grand boubou</div>
-                                    <div class="badge-tenue" data-tenue="Caftan Sénégalais">✨ Caftan</div>
-                                    <div class="badge-tenue" data-tenue="Complet 3 pièces">🥻 3 pièces</div>
-                                    <div class="badge-tenue" data-tenue="Robe sénégalaise">💃 Robe</div>
-                                    <div class="badge-tenue" data-tenue="Costume moderne">🎩 Costume</div>
-                                </div>
-                                <div class="input-group mt-3">
-                                    <input type="text" id="newTenueName" class="form-control form-control-sm" placeholder="Nouvelle tenue">
-                                    <button type="button" class="btn btn-outline-cream btn-sm" onclick="addNewTenue()"><i class="fas fa-plus-circle"></i> Ajouter</button>
-                                </div>
-                                <input type="hidden" id="selectedTenue" value="Boubou grand">
-                            </div>
-                        </div>
-
-                        <!-- SECTION 3 : Mensurations standard -->
+                        <!-- SECTION 2 : Mensurations standard -->
                         <div class="section-accordion">
                             <div class="section-header" data-section="mensurations">
                                 <h6><i class="fas fa-ruler-combined" style="color:#e8b32b;"></i> Mensurations standard (cm)</h6>
@@ -457,7 +408,7 @@
                             </div>
                         </div>
 
-                        <!-- SECTION 4 : Mesures personnalisées -->
+                        <!-- SECTION 3 : Mesures personnalisées -->
                         <div class="section-accordion">
                             <div class="section-header" data-section="custom">
                                 <h6><i class="fas fa-plus-circle" style="color:#e8b32b;"></i> Mesures personnalisées</h6>
@@ -465,14 +416,14 @@
                             </div>
                             <div class="section-content collapsed" id="section-custom">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="small text-muted">Ajoutez vos propres champs</span>
+                                    <span class="small text-muted">Ajoutez vos propres champs de mesure</span>
                                     <button type="button" class="btn btn-sm btn-gold" onclick="addCustomMeasureField()" style="padding: 4px 12px; font-size: 0.7rem;"><i class="fas fa-plus"></i> Ajouter</button>
                                 </div>
                                 <div id="customMeasuresContainer"></div>
                             </div>
                         </div>
 
-                        <!-- SECTION 5 : Proportions -->
+                        <!-- SECTION 4 : Proportions -->
                         <div class="section-accordion">
                             <div class="section-header" data-section="proportions">
                                 <h6><i class="fas fa-arrows-alt" style="color:#e8b32b;"></i> Proportions & morphologie</h6>
@@ -487,7 +438,7 @@
                             </div>
                         </div>
 
-                        <!-- SECTION 6 : Photos -->
+                        <!-- SECTION 5 : Photos -->
                         <div class="section-accordion">
                             <div class="section-header" data-section="photos">
                                 <h6><i class="fas fa-camera-retro" style="color:#e8b32b;"></i> Photos référence</h6>
@@ -496,17 +447,18 @@
                             <div class="section-content collapsed" id="section-photos">
                                 <input type="file" id="clientPhotos" accept="image/*" multiple class="form-control form-control-sm">
                                 <div id="photoPreviewContainer" class="d-flex flex-wrap gap-2 mt-2"></div>
+                                <small class="text-muted">Photos de posture, tissus préférés, etc.</small>
                             </div>
                         </div>
 
-                        <!-- SECTION 7 : Notes -->
+                        <!-- SECTION 6 : Notes -->
                         <div class="section-accordion">
                             <div class="section-header" data-section="notes">
                                 <h6><i class="fas fa-pen-alt" style="color:#e8b32b;"></i> Notes & préférences</h6>
                                 <i class="fas fa-chevron-down"></i>
                             </div>
                             <div class="section-content collapsed" id="section-notes">
-                                <textarea class="form-control" id="notes" rows="2" placeholder="Tissu préféré, coupe ajustée, motif spécial..."></textarea>
+                                <textarea class="form-control" id="notes" rows="2" placeholder="Tissu préféré, coupe ajustée, motif spécial, observations particulières..."></textarea>
                             </div>
                         </div>
 
@@ -562,12 +514,12 @@
                     <div class="table-responsive-custom">
                         <table class="table table-hover mb-0 table-custom">
                             <thead class="table-light">
-                                <tr><th>Client</th><th>Sexe</th><th>Tenue</th><th>Poitrine</th><th>Actions</th></tr>
+                                <tr><th>Client</th><th>Sexe</th><th>Poitrine</th><th>Taille</th><th>Actions</th></tr>
                             </thead>
                             <tbody id="clientTableBody">
                                 <tr><td colspan="5" class="text-center py-4">Chargement...</td></tr>
                             </tbody>
-                         </table>
+                        </table>
                     </div>
                 </div>
                 <div class="card-footer bg-white border-0 text-muted small text-center py-2">
@@ -618,15 +570,15 @@
         }
         if(!clientsData || clientsData.length === 0) {
             clientsData = [
-                { id: Date.now()+1, firstName: "Mame", lastName: "Diouf", gender: "homme", tenue: "Boubou grand", email: "mame@exemple.com", phone: "771234567",
+                { id: Date.now()+1, firstName: "Mame", lastName: "Diouf", gender: "homme", email: "mame@exemple.com", phone: "771234567",
                   chest: 102, waist: 88, hips: 98, sleeveLength: 64, shoulderWidth: 47, totalLength: 118,
                   height: 180, weight: 78, morphology: "Athlétique", notes: "Ourlet spécial, tissu bazin", photos: [],
                   customMeasures: {"Tour de bras": 32, "Longueur dos": 46}, date: new Date().toISOString() },
-                { id: Date.now()+2, firstName: "Fatou", lastName: "NDiaye", gender: "femme", tenue: "Robe sénégalaise", email: "fatou@exemple.com", phone: "778889900",
+                { id: Date.now()+2, firstName: "Fatou", lastName: "NDiaye", gender: "femme", email: "fatou@exemple.com", phone: "778889900",
                   chest: 92, waist: 74, hips: 98, sleeveLength: 58, shoulderWidth: 39, totalLength: 112,
                   height: 165, weight: 62, morphology: "Normal", notes: "Robe pour mariage", photos: [],
                   customMeasures: {"Tour de cou": 34}, date: new Date().toISOString() },
-                { id: Date.now()+3, firstName: "Ousmane", lastName: "Sow", gender: "homme", tenue: "Kaftan", email: "ousmane@exemple.com", phone: "776665544",
+                { id: Date.now()+3, firstName: "Ousmane", lastName: "Sow", gender: "homme", email: "ousmane@exemple.com", phone: "776665544",
                   chest: 98, waist: 84, hips: 96, sleeveLength: 62, shoulderWidth: 45, totalLength: 120,
                   height: 175, weight: 72, morphology: "Normal", notes: "Boubou pour Tabaski", photos: [],
                   customMeasures: {}, date: new Date().toISOString() }
@@ -679,8 +631,8 @@
             html += `<tr data-client-id="${c.id}" class="client-row">
                 <td><strong>${escapeHtml(c.firstName)} ${escapeHtml(c.lastName)}</strong><br><small class="text-muted">${c.phone || ''}</small></td>
                 <td><span class="gender-badge ${c.gender === 'homme' ? 'male' : 'female'}">${sexIcon} ${sexLabel}</span></td>
-                <td><span class="badge bg-success bg-opacity-25 text-dark px-2 py-1 rounded-pill" style="font-size:0.7rem">${escapeHtml(c.tenue)}</span></td>
                 <td>${c.chest || '-'} cm</td>
+                <td>${c.waist || '-'} cm</td>
                 <td>
                     <button class="btn btn-sm btn-outline-primary me-1" onclick="event.stopPropagation(); editClient(${c.id})" style="padding:2px 6px"><i class="fas fa-edit"></i></button>
                     <button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteClient(${c.id})" style="padding:2px 6px"><i class="fas fa-trash-alt"></i></button>
@@ -726,13 +678,6 @@
             document.getElementById('gender').value = 'femme';
         }
         
-        document.getElementById('selectedTenue').value = client.tenue;
-        document.querySelectorAll('.badge-tenue').forEach(badge => {
-            if(badge.getAttribute('data-tenue') === client.tenue) {
-                selectTenueElement(badge);
-            }
-        });
-        
         document.getElementById('chest').value = client.chest || '';
         document.getElementById('waist').value = client.waist || '';
         document.getElementById('hips').value = client.hips || '';
@@ -768,29 +713,7 @@
         showToast(`Client chargé : ${client.firstName} ${client.lastName}`, 'success');
     };
 
-    function selectTenueElement(el) {
-        document.querySelectorAll('.badge-tenue').forEach(b => b.classList.remove('selected'));
-        el.classList.add('selected');
-        document.getElementById('selectedTenue').value = el.getAttribute('data-tenue');
-    }
-    
-    window.addNewTenue = function() {
-        const newName = document.getElementById('newTenueName').value.trim();
-        if(!newName) { showToast("Veuillez entrer un nom de tenue", 'warning'); return; }
-        const container = document.getElementById('tenueOptions');
-        const badge = document.createElement('div');
-        badge.className = 'badge-tenue';
-        badge.setAttribute('data-tenue', newName);
-        badge.innerHTML = `✨ ${escapeHtml(newName)}`;
-        badge.onclick = function() { selectTenueElement(this); };
-        container.appendChild(badge);
-        selectTenueElement(badge);
-        document.getElementById('newTenueName').value = '';
-        showToast(`Tenue "${newName}" ajoutée`, 'success');
-    };
-    
-    document.querySelectorAll('.badge-tenue').forEach(b => { b.onclick = function() { selectTenueElement(this); }; });
-
+    // Champs personnalisés
     window.addCustomMeasureField = function() {
         const container = document.getElementById('customMeasuresContainer');
         const id = Date.now();
@@ -827,6 +750,7 @@
         }
     }
 
+    // Photos
     document.getElementById('clientPhotos').addEventListener('change', function(e) {
         photoDataArray = [];
         const preview = document.getElementById('photoPreviewContainer');
@@ -861,7 +785,6 @@
             email: document.getElementById('email').value, 
             phone: document.getElementById('phone').value,
             gender: genderValue, 
-            tenue: document.getElementById('selectedTenue').value,
             chest: parseFloat(document.getElementById('chest').value)||0, 
             waist: parseFloat(document.getElementById('waist').value)||0,
             hips: parseFloat(document.getElementById('hips').value)||0, 
@@ -907,8 +830,6 @@
         photoDataArray = []; 
         document.getElementById('photoPreviewContainer').innerHTML = '';
         document.getElementById('customMeasuresContainer').innerHTML = '';
-        const firstTenue = document.querySelector('.badge-tenue');
-        if(firstTenue) selectTenueElement(firstTenue);
         document.getElementById('saveBtn').removeAttribute('data-edit-id');
         document.getElementById('saveBtn').innerHTML = '<i class="fas fa-save"></i> Enregistrer';
         document.getElementById('formTitle').innerHTML = '<i class="fas fa-tape me-2"></i> Nouvelle fiche client';
@@ -923,14 +844,13 @@
         doc.text("📏 FICHE CLIENT - SenTailleur Pro", 20,20);
         doc.setFontSize(12); 
         doc.text(`${c.firstName} ${c.lastName} - ${c.gender==='homme'?'Homme':'Femme'}`,20,40);
-        doc.text(`Tenue: ${c.tenue}`,20,50); 
-        doc.text(`Tél: ${c.phone||'-'} | Email: ${c.email||'-'}`,20,60);
-        doc.text(`Mensurations: Poitrine ${c.chest}cm / Taille ${c.waist}cm / Hanches ${c.hips}cm`,20,80);
-        doc.text(`Manche: ${c.sleeveLength}cm / Épaules: ${c.shoulderWidth}cm / Longueur tenue: ${c.totalLength}cm`,20,95);
-        doc.text(`Hauteur: ${c.height}cm - Poids: ${c.weight}kg - Morphologie: ${c.morphology}`,20,110);
-        if(c.notes) doc.text(`Notes: ${c.notes}`,20,125);
+        doc.text(`Tél: ${c.phone||'-'} | Email: ${c.email||'-'}`,20,50);
+        doc.text(`Mensurations: Poitrine ${c.chest}cm / Taille ${c.waist}cm / Hanches ${c.hips}cm`,20,65);
+        doc.text(`Manche: ${c.sleeveLength}cm / Épaules: ${c.shoulderWidth}cm / Longueur tenue: ${c.totalLength}cm`,20,80);
+        doc.text(`Hauteur: ${c.height}cm - Poids: ${c.weight}kg - Morphologie: ${c.morphology}`,20,95);
+        if(c.notes) doc.text(`Notes: ${c.notes}`,20,110);
         if(c.customMeasures && Object.keys(c.customMeasures).length) {
-            let y = 140;
+            let y = 125;
             doc.text("Mesures supplémentaires:", 20, y);
             y+=8;
             for(let [k,v] of Object.entries(c.customMeasures)) {
